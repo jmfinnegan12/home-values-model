@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What will Zillow's November 2026 home values be in 16 US cities? · Event Neutral</title>
+<link rel="stylesheet" href="https://eventneutral.com/kit/v1/kit.css?v=3">
+<script src="https://eventneutral.com/kit/v1/theme.js"></script>
+<style>
+  .en-chart { margin: 14px 0 4px; }
+  .en-chart text { font-variant-numeric: tabular-nums; }
+  .example { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap bar-inner">
+    <a class="brand" href="https://eventneutral.com/">Event&nbsp;Neutral</a>
+    <nav class="nav">
+      <a href="https://eventneutral.com/">Home</a>
+      <a href="https://eventneutral.com/about/">About</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="kicker">Started 2026-11-11 · Local preview, not published</div>
+    <h1>What will Zillow's November 2026 home values be in 16 US cities?</h1>
+    <nav class="wiki"><a href="" aria-current="page">Question</a> <a href="model/">Model</a></nav>
+
+    <h2>The number</h2>
+    <p>The Zillow Home Value Index (ZHVI) is Zillow's estimate of a typical home's value in a place, in dollars, each month.<sup class="fn"><a href="#s1">1</a></sup> These markets use one version of it: single-family homes only, the middle third of values (the 33rd to 67th percentile), smoothed over three months and seasonally adjusted.<sup class="fn"><a href="#s1">1</a>,<a href="#s2">2</a></sup> Zillow's Home Values page shows all homes by default, which is a different number.<sup class="fn"><a href="#s3">3</a></sup></p>
+    <p>Change over the year to September 2026:</p>
+    <div class="en-chart" id="yoy"></div>
+
+    <h2>How Zillow builds it</h2>
+    <ul>
+      <li><strong>From Zestimates.</strong> Zillow estimates the value of every home, sold or not, then takes the middle of the middle-third homes in each place. Zestimate models are retrained several times a week.<sup class="fn"><a href="#s2">2</a></sup></li>
+      <li><strong>Smoothed.</strong> Each month is close to an average of the last three months of the unsmoothed series, so a November value rests mostly on September to November sales and listings.<sup class="fn"><a href="#s3">3</a></sup></li>
+      <li><strong>Published about three weeks after the month ends.</strong><sup class="fn"><a href="#s2">2</a></sup> September 2026 came out on 2026-10-15. Zillow has not yet published October; FRED, which republishes the series, lists 2026-11-19 as its next release.<sup class="fn"><a href="#s4">4</a></sup> November is expected in mid-December.</li>
+      <li><strong>Every release rewrites the past.</strong> When Zillow publishes a new month, it rescales a city's whole history by one factor. In one pair of releases, every month of Austin's single-family series moved up 1.70%; in another, every month of Seattle's moved down 2.54%. Across all cities the shift averages 1.6% to 1.9% either way, larger than a typical month's real change.<sup class="fn"><a href="#s5">5</a></sup> The factor is unknown until the release.</li>
+    </ul>
+
+    <h2><a class="t" href="rules/">The question</a></h2>
+    <p>For each of 16 cities, will November 2026's value be above each of five strikes? The first value Zillow publishes for November counts; later revisions do not. Trading closes 2026-12-17 at 10:00 a.m. ET.<sup class="fn"><a href="#s6">6</a></sup> <a href="rules/">Rules →</a></p>
+
+    <h2 id="sources">Sources</h2>
+    <ol class="sources">
+      <li id="s1"><a href="https://www.zillow.com/research/data/">Zillow Research. Housing data: ZHVI, single-family, middle tier, smoothed, seasonally adjusted. City, neighborhood and metro files of 2026-10-16.</a></li>
+      <li id="s2"><a href="https://wp.zillowstatic.com/3/ZHVI-InfoSheet-04ed2b.pdf">Zillow. ZHVI information sheet (undated).</a></li>
+      <li id="s3"><a href="https://www.zillow.com/research/zhvi-methodology/">Zillow Research. ZHVI methodology.</a> Smoothing weights and the default page figure checked against Zillow's files.</li>
+      <li id="s4"><a href="https://fred.stlouisfed.org/series/USAUCSFRCONDOSMSAMID">Federal Reserve Bank of St. Louis. FRED, Zillow Home Value Index, release dates.</a></li>
+      <li id="s5">Zillow city files of different dates, from the <a href="https://web.archive.org/">Internet Archive</a>, compared month by month (2022–2026).</li>
+      <li id="s6"><a href="https://assets.kalshi.com/contract_terms/HOMEVALUE.pdf">Kalshi. HOMEVALUE contract terms</a> and market rules.</li>
+    </ol>
+
+    <p class="muted" style="margin-top:28px">Last updated 2026-11-13</p>
+    <p class="muted">Nothing here is financial advice or a recommendation to trade.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">© 2026 Temerity Ventures LLC · <a href="mailto:info@eventneutral.com">Contact</a></div>
+</footer>
+
+<script src="https://eventneutral.com/kit/v1/vendor/d3.v7.min.js"></script>
+<script src="https://eventneutral.com/kit/v1/kit.js?v=2"></script>
+<script>
+fetch('data/cities.json').then((r) => r.json()).then((D) => {
+  const C = D.cities.slice().sort((a, b) => b.yoy - a.yoy);
+  EN.chart.frame(document.getElementById('yoy'), () => C.length * 24 + 40, ({ svg, width, height }) => {
+    svg.selectAll('*').remove();
+    const m = { t: 8, r: 54, b: 28, l: 126 };
+    const lim = Math.ceil(d3.max(C, (c) => Math.abs(c.yoy)) * 100 + 1);
+    const x = d3.scaleLinear([-lim, lim], [m.l, width - m.r]);
+    const y = d3.scaleBand(C.map((c) => c.slug), [m.t, height - m.b]).padding(0.3);
+    svg.attr('aria-label', 'Change over the year to September 2026: ' + C.map((c) => `${c.name} ${(c.yoy * 100).toFixed(1)}%`).join(', '));
+    svg.append('g').attr('class', 'axis').attr('transform', `translate(0,${height - m.b})`).call(d3.axisBottom(x).ticks(width < 520 ? 4 : 8).tickSize(5).tickPadding(6).tickFormat((v) => `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v)}%`));
+    svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', m.t).attr('y2', height - m.b).attr('stroke', 'var(--ink-faint)');
+    const g = svg.append('g').selectAll('g').data(C).join('g');
+    g.append('text').attr('x', m.l - 10).attr('y', (c) => y(c.slug) + y.bandwidth() / 2).attr('dy', '0.35em').attr('text-anchor', 'end').style('fill', 'var(--ink-soft)').text((c) => c.name);
+    g.append('rect').attr('x', (c) => x(Math.min(0, c.yoy * 100))).attr('width', (c) => Math.abs(x(c.yoy * 100) - x(0))).attr('y', (c) => y(c.slug)).attr('height', y.bandwidth()).attr('rx', 1.5)
+      .attr('fill', (c) => (c.yoy >= 0 ? 'var(--s1)' : 'var(--s2)'));
+    g.append('text').attr('class', 'note').attr('x', (c) => (c.yoy >= 0 ? x(c.yoy * 100) + 6 : x(c.yoy * 100) - 6)).attr('text-anchor', (c) => (c.yoy >= 0 ? 'start' : 'end'))
+      .attr('y', (c) => y(c.slug) + y.bandwidth() / 2).attr('dy', '0.35em').style('fill', 'var(--ink-soft)').text((c) => `${c.yoy >= 0 ? '+' : '−'}${Math.abs(c.yoy * 100).toFixed(1)}%`);
+  });
+});
+</script>
+</body>
+</html>

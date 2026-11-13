@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model · What will Zillow's November 2026 home values be in 16 US cities? · Event Neutral</title>
+<link rel="stylesheet" href="https://eventneutral.com/kit/v1/kit.css?v=3">
+<script src="https://eventneutral.com/kit/v1/theme.js"></script>
+<style>
+  .sum { font-size: 21px; line-height: 1.45; margin: 14px 0 6px; max-width: 34em; font-variant-numeric: tabular-nums; }
+  .sum b { font-weight: 650; }
+  .en-chart { margin: 14px 0 4px; }
+  .en-chart text { font-variant-numeric: tabular-nums; }
+  .key { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 14.5px; color: var(--ink-soft); margin: 10px 0 0; }
+  .key i { display: inline-block; width: 16px; vertical-align: middle; margin-right: 6px; }
+  .key i.line { border-top: 2px solid var(--s1); }
+  .key i.range { height: 10px; background: var(--s2); opacity: .28; }
+  .key i.proj { border-top: 2px dashed var(--s2); }
+  .key i.dot { width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--s2); }
+  .picker { display: flex; flex-wrap: wrap; gap: 6px; margin: 18px 0 4px; }
+  .picker button { font: inherit; font-size: 15px; padding: 5px 11px; border-radius: 4px; border: 1px solid var(--line); background: var(--bg-raise); color: var(--ink-soft); cursor: pointer; }
+  .picker button[aria-pressed="true"] { border-color: var(--s2); color: var(--ink); }
+  .picker button.adj::after { content: " •"; color: var(--s2); }
+  .city-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 40px 0 0; }
+  .city-head h2 { margin: 0; }
+  .city-head .muted { font-size: 15px; }
+  #overview .row { cursor: pointer; }
+  #ladder .bar { cursor: pointer; }
+  .inputs-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 40px 0 6px; }
+  .inputs-head h2 { margin: 0; }
+  .field + .field { margin-top: 0; border-top: none; }
+  .field { display: grid; grid-template-columns: minmax(0, 1fr) minmax(140px, 260px) 120px; column-gap: 20px; align-items: center; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 14px 0; margin: 22px 0 6px; }
+  .field .name { font-weight: 600; line-height: 1.3; }
+  .field .note { grid-column: 1 / -1; font-size: 15.5px; color: var(--ink-soft); margin: 6px 0 0; }
+  .field .en-num input { width: 76px; }
+  .research ul { margin: 6px 0 12px 20px; max-width: 70ch; }
+  .research li { margin: 4px 0; }
+  .research p { max-width: 70ch; }
+  #mine { font-variant-numeric: tabular-nums; }
+  @media (max-width: 760px) {
+    .sum { font-size: 19px; }
+    .field { grid-template-columns: minmax(0, 1fr) auto; }
+    .field .name { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap wide bar-inner">
+    <a class="brand" href="https://eventneutral.com/">Event&nbsp;Neutral</a>
+    <nav class="nav">
+      <a href="https://eventneutral.com/">Home</a>
+      <a href="https://eventneutral.com/about/">About</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap wide">
+    <div class="kicker">Started 2026-11-11 · Data through September 2026 · Local preview, not published</div>
+    <h1>What will Zillow's November 2026 home values be in 16 US cities?</h1>
+    <nav class="wiki"><a href="../">Question</a> <a href="./" aria-current="page">Model</a></nav>
+
+    <h2>All sixteen cities</h2>
+    <p class="measure">Change from September to the first print of November, Zillow's single-family, mid-tier value. Bars run from the 10th to the 90th percentile. Pick a city.</p>
+    <div class="en-chart" id="overview"></div>
+
+    <div class="picker" id="picker" role="group" aria-label="City"></div>
+
+    <div class="city-head"><h2 id="city-name"></h2><span class="muted" id="city-sub"></span></div>
+    <p class="sum" id="say" aria-live="polite"></p>
+    <div class="en-chart" id="series"></div>
+    <div class="key" aria-hidden="true">
+      <span><i class="line"></i>Zillow value, as Zillow shows it now</span>
+      <span><i class="proj"></i>Model path to November</span>
+      <span><i class="dot"></i>November center</span>
+      <span><i class="range"></i>10th to 90th percentile</span>
+    </div>
+    <div class="en-chart" id="dist"></div>
+    <div class="en-chart" id="ladder"></div>
+    <p class="muted hint">Pick a strike. Dashed: the model before your changes.</p>
+
+    <div class="inputs-head"><h2>Inputs</h2><button class="en-btn" id="reset" type="button">Reset to the model</button></div>
+    <div class="field" id="adj-field">
+      <div class="name">Adjustment to the November center</div>
+      <p class="note" id="adj-note"></p>
+    </div>
+    <div class="field" id="sd-field">
+      <div class="name">Standard deviation</div>
+      <p class="note" id="sd-note"></p>
+    </div>
+    <p class="muted" id="mine"></p>
+
+    <div class="research">
+      <h2>What the research found</h2>
+      <ul id="found"></ul>
+      <p class="muted" id="gaps"></p>
+    </div>
+
+    <div class="end" style="margin-top:40px">
+      <details class="en-q">
+        <summary>How the model works</summary>
+        <ul>
+          <li>Center: the September value carried forward two months by the average of two pooled autoregressions on monthly changes, plus a small term for the gap between the city's and its metro's latest change. Backtested from 2023.</li>
+          <li>Spread: two parts. The model's own forecast error, sized per city from its recent misses. And Zillow's revision of the whole history at each release, which moves every past month by one factor; fat-tailed, standard deviation 1.55% over two releases, 10% more for Pacific Palisades and Venice.</li>
+          <li>The adjustment moves the center by that many percentage points. The standard deviation input stretches or shrinks the whole distribution, keeping its shape.</li>
+          <li>Only the first print of November counts. Kalshi's "above" is strictly greater.</li>
+        </ul>
+      </details>
+      <details class="en-q">
+        <summary>Update log</summary>
+        <dl><dt>2026-11-13</dt><dd>First draft. Built from Zillow's files of 2026-10-16, which end at September 2026. Zillow has not yet published October; when it does, the model is rerun with October as the last month and one month left to forecast.</dd></dl>
+      </details>
+    </div>
+
+    <h2 id="sources">Sources</h2>
+    <ol class="sources">
+      <li><a href="https://www.zillow.com/research/data/">Zillow Research. ZHVI single-family, middle tier (0.33–0.67), smoothed, seasonally adjusted; city, neighborhood and metro files of 2026-10-16.</a></li>
+      <li><a href="https://kalshi.com/">Kalshi. Home value market rules for the sixteen cities.</a></li>
+    </ol>
+    <p class="muted">Nothing here is financial advice or a recommendation to trade.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap wide foot-inner">© 2026 Temerity Ventures LLC · <a href="mailto:info@eventneutral.com">Contact</a></div>
+</footer>
+
+<script src="https://eventneutral.com/kit/v1/vendor/d3.v7.min.js"></script>
+<script src="https://eventneutral.com/kit/v1/kit.js?v=2"></script>
+<script src="page.js?v=1"></script>
+</body>
+</html>

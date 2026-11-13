@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rules · What will Zillow's November 2026 home values be in 16 US cities? · Event Neutral</title>
+<link rel="stylesheet" href="https://eventneutral.com/kit/v1/kit.css?v=3">
+<script src="https://eventneutral.com/kit/v1/theme.js"></script>
+<style>
+  #cities li { font-variant-numeric: tabular-nums; margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap bar-inner">
+    <a class="brand" href="https://eventneutral.com/">Event&nbsp;Neutral</a>
+    <nav class="nav">
+      <a href="https://eventneutral.com/">Home</a>
+      <a href="https://eventneutral.com/about/">About</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="kicker">Started 2026-11-11 · Local preview, not published</div>
+    <h1>What will Zillow's November 2026 home values be in 16 US cities?</h1>
+    <nav class="wiki"><a href="../" aria-current="page">Question</a> <a href="../model/">Model</a></nav>
+    <p class="crumbs"><a href="../">Question</a> › Rules</p>
+    <h2>Rules</h2>
+    <p>Markets: sixteen Kalshi events, one per city, each ending <code>-30NOV26</code> · <a href="https://assets.kalshi.com/contract_terms/HOMEVALUE.pdf">contract terms</a></p>
+    <ul>
+      <li><strong>Yes if</strong> the Zillow Home Value Index for single-family homes in the city, identified by Zillow region ID, is above the strike for November 2026.</li>
+      <li><strong>Strikes:</strong> five per city, each its own market. "Above" means strictly greater than.</li>
+      <li><strong>The figure:</strong> ZHVI, single-family homes, middle tier, smoothed and seasonally adjusted, in whole dollars, as shown on Zillow's Home Values page for the region with single-family selected. Zillow Research's data file is the fallback.</li>
+      <li><strong>The first published value counts.</strong> Later revisions do not change the result.</li>
+      <li><strong>Timing:</strong> trading closes 2026-12-17 at 10:00 a.m. ET, and can close early on release. Expected settlement 2026-12-19; latest 2027-01-04.</li>
+      <li><strong>Not allowed to trade:</strong> Zillow staff and vendors with early access to the index, and anyone with material nonpublic information about it.</li>
+    </ul>
+
+    <h3>Cities, region IDs and strikes</h3>
+    <ul id="cities"></ul>
+
+    <ol class="sources">
+      <li id="s1"><a href="https://assets.kalshi.com/contract_terms/HOMEVALUE.pdf">Kalshi. HOMEVALUE contract terms</a>, and each market's rules on Kalshi.</li>
+    </ol>
+
+    <p class="muted">Last updated 2026-11-13</p>
+    <p class="muted">Nothing here is financial advice or a recommendation to trade.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap foot-inner">© 2026 Temerity Ventures LLC · <a href="mailto:info@eventneutral.com">Contact</a></div>
+</footer>
+<script>
+fetch('../data/cities.json').then((r) => r.json()).then((D) => {
+  const f = (v) => '$' + v.toLocaleString();
+  document.getElementById('cities').innerHTML = D.cities.map((c) =>
+    `<li><strong>${c.name}</strong> · region ${c.region_id} · <a href="https://kalshi.com/markets/${c.ticker.toLowerCase()}">${c.ticker}</a> · ${c.strikes.map(f).join(', ')}</li>`).join('');
+});
+</script>
+</body>
+</html>
